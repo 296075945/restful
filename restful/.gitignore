@@ -1,0 +1,11 @@
+/.settings/
+*/.settings/
+target/
+bin/
+
+*.log
+
+.project
+.classpath
+.factorypath
+.springBeans

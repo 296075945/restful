@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.wy.restful.config.ServerProperties,\
+com.wy.restful.config.RestfulServerAutoConfiguration,\
+com.wy.restful.util.ApplicationContextUtil
