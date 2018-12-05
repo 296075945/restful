@@ -41,9 +41,7 @@ public class Work {
 					if (Get.class == annotation.annotationType()) {
 						String path = ((Get) annotation).value();
 						addHandle(bean, method, path, HttpMethod.GET, getBodyType(method));
-
-					}
-					if (Post.class == annotation.annotationType()) {
+					} else if (Post.class == annotation.annotationType()) {
 						String path = ((Post) annotation).value();
 						addHandle(bean, method, path, HttpMethod.POST, getBodyType(method));
 					}

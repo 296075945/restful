@@ -63,11 +63,11 @@ public class Server {
 	}
 
 	private EventLoopGroup getBoosGroup() {
-		return new NioEventLoopGroup();
+		return new NioEventLoopGroup(1);
 	}
 
 	private EventLoopGroup getWorkerGroup() {
-		return new NioEventLoopGroup();
+		return new NioEventLoopGroup(1);
 	}
 
 	private Class<? extends ServerChannel> getChannelClass() {
