@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.wy.restful.entity.Headers;
+import com.wy.restful.exception.NotFoundException;
 import com.wy.restful.util.ApplicationContextUtil;
 
 import io.netty.buffer.Unpooled;
@@ -47,17 +48,25 @@ public class DispatchHandler extends ChannelInboundHandlerAdapter {
 							headers.put(entry.getKey(), entry.getValue());
 						}
 						String content = request.content().toString(Charset.forName("UTF-8"));
-						Object responseObj = work.invoke(method, request.uri(), content);
-						String responseBody = JSON.toJSONString(responseObj);
-						FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(responseBody.getBytes()));
-						response.headers().set(Headers.CONTENT_TYPE, "application/json");
-						response.headers().set(Headers.CONTENT_LENGTH, response.content().readableBytes());
-						headers = Headers.getResponseHeaders();
-						if (headers != null) {
-							for (Map.Entry<String, String> entry : headers) {
-								response.headers().set(entry.getKey(), entry.getValue());
+						FullHttpResponse response ; 
+						Object responseObj;
+						try {
+							responseObj = work.invoke(method, request.uri(), content);
+							String responseBody = JSON.toJSONString(responseObj);
+							response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(responseBody.getBytes()));
+							response.headers().set(Headers.CONTENT_TYPE, "application/json");
+							response.headers().set(Headers.CONTENT_LENGTH, response.content().readableBytes());
+							headers = Headers.getResponseHeaders();
+							if (headers != null) {
+								for (Map.Entry<String, String> entry : headers) {
+									response.headers().set(entry.getKey(), entry.getValue());
+								}
 							}
+						} catch (NotFoundException e) {
+							response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND);
+							response.headers().set(Headers.CONTENT_LENGTH, 0);
 						}
+						
 						Headers.removeThreadLocal();
 						ctx.writeAndFlush(response);
 					}

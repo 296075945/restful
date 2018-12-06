@@ -14,6 +14,7 @@ import com.wy.restful.annotation.Get;
 import com.wy.restful.annotation.Post;
 import com.wy.restful.annotation.Restful;
 import com.wy.restful.entity.Handle;
+import com.wy.restful.exception.NotFoundException;
 
 import io.netty.handler.codec.http.HttpMethod;
 
@@ -63,9 +64,12 @@ public class Work {
 		handers.putIfAbsent(key, handle);
 	}
 
-	public Object invoke(HttpMethod httpMethod, String path, String body) {
+	public Object invoke(HttpMethod httpMethod, String path, String body) throws NotFoundException  {
 		String key = httpMethod.name() + ":" + path;
 		Handle handle = handers.get(key);
+		if(handle == null) {
+			throw new NotFoundException();
+		}
 		Object paramObj = JSON.parseObject(body, handle.getBodyType());
 		if (handle != null) {
 			try {
