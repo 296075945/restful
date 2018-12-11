@@ -2,6 +2,8 @@ package com.wy.demo.web;
 
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wy.demo.service.HelloService;
@@ -18,5 +20,9 @@ public class HelloController {
 	@Post("/hello")
 	public HelloVO hello(Map<String, String> hello) {
 		return helloService.getHello();
+	}
+	@Post("/saveHello")
+	public HelloVO saveHello(@Valid HelloVO hello) {
+		return hello;
 	}
 }
